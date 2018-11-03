@@ -24,7 +24,7 @@ sudo yum install wget -y
 
 # Download dos binários e arquivos de configuração
 cd /u01/software/
-sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/jdk-8u191-linux-x64.tar.gz && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/fmw_12.2.1.0.0_wls.jar && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/shoppingcart.war && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/wls.rsp && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/oraInst.loc && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/domain.py && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/boot.properties
+sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/jdk-8u191-linux-x64.tar.gz && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/fmw_12.2.1.0.0_wls.jar && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/shoppingcart.war && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/wls.rsp && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/oraInst.loc && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/domain.py && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/boot.properties && sudo -u oracle wget https://s3.amazonaws.com/valeria-weblogic-teste/deploy.py
 
 # Exportar variáveis
 sudo -u oracle echo "export MW_HOME=/u01/app/oracle/middleware" >> /home/oracle/.bash_profile && echo "export WLS_HOME=/u01/app/oracle/middleware/wlserver" >> /home/oracle/.bash_profile && echo "export WL_HOME=/u01/app/oracle/middleware/wlserver" >> /home/oracle/.bash_profile && echo "export JAVA_HOME=/u01/app/oracle/jdk1.8.0_191" >> /home/oracle/.bash_profile && echo "export PATH=/u01/app/oracle/jdk1.8.0_191/bin:$PATH" >> /home/oracle/.bash_profile
@@ -38,19 +38,22 @@ cd /u01/app/oracle/jdk1.8.0_191
 sudo -u oracle /u01/app/oracle/jdk1.8.0_191/bin/java -Xmx1024m -jar /u01/software/fmw_12.2.1.0.0_wls.jar -silent -responseFile /u01/software/wls.rsp -invPtrLoc /u01/software/oraInst.loc
 
 # Determinar qual versão do JDK será usada
-. /u01/app/oracle/middleware/wlserver/server/bin/setWLSEnv.sh
+sudo -u oracle . /u01/app/oracle/middleware/wlserver/server/bin/setWLSEnv.sh
 
 # Criando domínio
 cd /u01/app/oracle/middleware/oracle_common/common/bin
-./wlst.sh /u01/software/domain.py
+sudo -u oracle ./wlst.sh /u01/software/domain.py
 
 # Alterando configuração do java para iniciar weblogic
-sed 's/-Xshare:off -XX:+UnlockCommercialFeatures/-Xshare:off -XX:+UnlockCommercialFeatures -XX:+ResourceManagement/g' /u01/app/oracle/config/domains/mydomain/bin/startWebLogic.sh
+sudo -u oracle sed 's/-Xshare:off -XX:+UnlockCommercialFeatures/-Xshare:off -XX:+UnlockCommercialFeatures -XX:+ResourceManagement/g' /u01/app/oracle/config/domains/mydomain/bin/startWebLogic.sh
+
+#cd /u01/app/oracle/config/domains/mydomain/
+#sudo -u oracle nohup ./startWebLogic.sh &
 
 # Movendo o arquivo boot-properties
-mkdir -p /u01/app/oracle/config/domains/mydomain/servers/weblogic/security/
-mv /u01/software/boot.properties /u01/app/oracle/config/domains/mydomain/servers/weblogic/security/
+sudo -u oracle mkdir -p /u01/app/oracle/config/domains/mydomain/servers/weblogic/security/
+sudo -u oracle mv /u01/software/boot.properties /u01/app/oracle/config/domains/mydomain/servers/weblogic/security/
 
 # iniciar WebLogic
 cd /u01/app/oracle/config/domains/mydomain/
-nohup ./startWebLogic.sh &
+sudo -u oracle nohup ./startWebLogic.sh &
